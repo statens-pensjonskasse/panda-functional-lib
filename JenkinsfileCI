@@ -1,0 +1,15 @@
+#!groovy
+@Library('jenkins-pipeline-library')
+import no.spk.jenkins.pipeline.ci.config.CIPipelineConfig
+
+ciPipeline {
+    config = CIPipelineConfig.get()
+            .withTriggers(cron: '@daily', fromBranches: 'develop') // Trigges også på commit ved hjelp av webhook i Bitbucket
+            .useMaven(jdkVersion: 21, build: 'clean install -DskipTests', test: 'verify -Djacoco.skip=false', publish: 'deploy -DskipTests')
+            .withPublish(branches: 'develop', whenScheduled: true) // Snapshots lages fra develop
+            .withRelease(fromBranch: 'master')
+            .withEmailNotifications(recipients: 'ITO-TeamPremie@spk.no')
+            .withSlackNotifications(channels: 'panda-ci', prefix: ':panda_face:')
+            .withGitTaggingStrategy(semantic: 'master', latest: '', keep: 9999)
+            .withGit(developBranch: 'develop')
+}
