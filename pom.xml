@@ -9,8 +9,8 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>no.spk.felles</groupId>
-    <artifactId>felles-functional-lib</artifactId>
+    <groupId>no.spk.panda</groupId>
+    <artifactId>panda-functional-lib</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
