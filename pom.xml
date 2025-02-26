@@ -2,16 +2,29 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>no.spk</groupId>
         <artifactId>spk-root-pom</artifactId>
         <version>131.0.5</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
     <groupId>no.spk.panda</groupId>
     <artifactId>panda-functional-lib</artifactId>
     <version>1.0.1-SNAPSHOT</version>
+
+    <scm>
+        <connection>scm:git:git@github.com:statens-pensjonskasse/panda-functional-lib.git</connection>
+        <developerConnection>scm:git:git@github.com:statens-pensjonskasse/panda-functional-lib.git</developerConnection>
+        <url>https://github.com/statens-pensjonskasse/panda-functional-lib</url>
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/statens-pensjonskasse/panda-functional-lib</url>
+        </repository>
+    </distributionManagement>
 
     <properties>
         <java.version>21</java.version>
@@ -39,6 +52,13 @@
             <version>${junit5.version}</version>
         </dependency>
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/statens-pensjonskasse/*</url>
+        </repository>
+    </repositories>
 
     <build>
         <plugins>
