@@ -18,6 +18,6 @@ Endringer kan pushes rett til develop-branchen. Lag PR til master for review.
 Hvordan release panda-functional-lib
 ====================================
 
-Biblioteket JPL benyttes for å release en ny versjon. Lag pull request fra develop inn i master, så lages det release automatisk. Det benyttes
-semantisk versjonering, og versjonen bumpes automatisk med patch-nummeret. For større endringer som ikke er bakoverkompatible: Bump minor eller major
-manuelt ved å endre i pom.xml.
+Vi bruker en github-workflow for å lage nye releaser. Lag pull request fra develop inn i main, så lages det release automatisk. 
+Det benyttes semantisk versjonering, og versjonen bumpes automatisk med patch-nummeret.
+For større endringer som ikke er bakoverkompatible: Bump minor eller major manuelt ved å endre i pom.xml.
