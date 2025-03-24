@@ -13,7 +13,7 @@ Hvordan bygge panda-functional-lib
 Hvordan utvikle panda-functional-lib
 ====================================
 
-Endringer kan pushes rett til develop-branchen. Lag PR til master for review.
+Endringer kan pushes rett til develop-branchen. Lag PR til main for review.
 
 Hvordan release panda-functional-lib
 ====================================
