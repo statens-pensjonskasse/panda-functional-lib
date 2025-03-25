@@ -19,7 +19,7 @@ import java.util.stream.Stream;
  * som blir produsert underveis.
  *
  * @param <T> typen av det man skal akkumulere på
- * @see Collectors#scanLeft1(BinaryOperator)
+ * @see Collectors#scanLeft(Optional, BinaryOperator)
  */
 public class ScanLeftCollector<T> implements Collector<T, ScanLeftCollector.Akkumulator<T>, Stream<T>> {
     public static class Akkumulator<T> {

@@ -2,18 +2,18 @@ package no.spk.panda.functional;
 
 import static java.util.stream.IntStream.range;
 import static java.util.stream.IntStream.rangeClosed;
+import static no.spk.panda.functional.Collectors.scanLeft1;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.BinaryOperator;
 import java.util.stream.Collector;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 
-class ScanLeft1CollectorTest {
+class ScanLeft1Test {
     @Test
     void skal_kalle_akkumulatorfunksjon_en_gang_pr_element_i_streamen_etter_første_element() {
         final AtomicInteger counter = new AtomicInteger(0);
@@ -67,7 +67,7 @@ class ScanLeft1CollectorTest {
         assertThat(
                 Stream.of(expected)
                         .collect(
-                                Collectors.scanLeft1(
+                                scanLeft1(
                                         (forrige, neste) -> new Object()
                                 )
                         )
@@ -82,7 +82,7 @@ class ScanLeft1CollectorTest {
         Stream
                 .of(new Object())
                 .collect(
-                        Collectors.scanLeft1(
+                        scanLeft1(
                                 (forrige, neste) -> {
                                     throw new AssertionError("Uforventa kall til vindufunksjonen");
                                 }
@@ -98,7 +98,7 @@ class ScanLeft1CollectorTest {
                         .boxed()
                         .parallel()
                         .collect(
-                                Collectors.scanLeft1(
+                                scanLeft1(
                                         (forrige, neste) -> neste
                                 )
                         )
@@ -107,10 +107,6 @@ class ScanLeft1CollectorTest {
                 .as("feil ved bruk på parallell-stream")
                 .isInstanceOf(UnsupportedOperationException.class)
                 .hasMessageContaining("Støttar ikkje parallellitet i scanLeft1");
-    }
-
-    private static Collector<Integer, ?, Stream<Integer>> scanLeft1(final BinaryOperator<Integer> operasjon) {
-        return new ScanLeft1Collector<>(operasjon);
     }
 
     private static Stream<Integer> collect(final IntStream input, final Collector<Integer, ?, Stream<Integer>> fold) {

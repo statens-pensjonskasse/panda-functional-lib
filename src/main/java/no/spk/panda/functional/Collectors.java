@@ -190,7 +190,7 @@ public interface Collectors {
      * @see #foldLeft(Object, BiFunction)
      */
     static <T> Collector<T, ?, Stream<T>> scanLeft1(final BinaryOperator<T> mapper) {
-        return new ScanLeft1Collector<>(mapper);
+        return new ScanLeftCollector<>(Optional.empty(), mapper);
     }
 
     /**
@@ -225,7 +225,7 @@ public interface Collectors {
      * @param mapper        handlingen som skal gjøres på den akumullerte tilstanden + det nye elementet
      * @return en ny collector for scanleft
      * @throws UnsupportedOperationException dersom collectoren blir brukt på en parallell stream
-     * @see #scanLeft1(BinaryOperator)
+     * @see #scanLeft(Optional, BinaryOperator)
      */
     static <T> Collector<T, ?, Stream<T>> scanLeft(final Optional<T> initiellVerdi, final BinaryOperator<T> mapper) {
         return new ScanLeftCollector<>(initiellVerdi, mapper);
