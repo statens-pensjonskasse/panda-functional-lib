@@ -15,17 +15,21 @@ import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 /**
- * Kombinerer/akkumulerer to og to elementer fra streamen, returnerer en Stream som inneholder både siste resultat og alle delresultat
+ * Kombinerer/akkumulerer to og to elementer fra streamen med en valgfri initiell verdi først, returnerer en Stream som inneholder både siste resultat og alle delresultat
  * som blir produsert underveis.
  *
  * @param <T> typen av det man skal akkumulere på
- * @see Collectors#scanLeft1(BinaryOperator)
+ * @see Collectors#scanLeft(Optional, BinaryOperator)
  */
-public class ScanLeft1Collector<T> implements Collector<T, ScanLeft1Collector.Akkumulator<T>, Stream<T>> {
+public class ScanLeftCollector<T> implements Collector<T, ScanLeftCollector.Akkumulator<T>, Stream<T>> {
     public static class Akkumulator<T> {
         private LinkedList<T> resultat = new LinkedList<>();
 
-        private Optional<T> forrige = Optional.empty();
+        private Optional<T> forrige;
+
+        public Akkumulator(final Optional<T> initiellVerdi) {
+            forrige = requireNonNull(initiellVerdi, "initiellVerdi er påkrevd, men var null");
+        }
 
         void concat(
                 final T neste,
@@ -51,15 +55,17 @@ public class ScanLeft1Collector<T> implements Collector<T, ScanLeft1Collector.Ak
         }
     }
 
+    private final Optional<T> initiellVerdi;
     private final BinaryOperator<T> mapper;
 
-    ScanLeft1Collector(final BinaryOperator<T> mapper) {
+    ScanLeftCollector(final Optional<T> initiellVerdi, final BinaryOperator<T> mapper) {
+        this.initiellVerdi = requireNonNull(initiellVerdi, "initiellVerdi er påkrevd, men var null");
         this.mapper = requireNonNull(mapper, "mapper er påkrevd, men var null");
     }
 
     @Override
     public Supplier<Akkumulator<T>> supplier() {
-        return Akkumulator::new;
+        return () -> new Akkumulator<>(initiellVerdi);
     }
 
     @Override
