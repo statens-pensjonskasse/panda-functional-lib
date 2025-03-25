@@ -159,46 +159,8 @@ public interface Collectors {
      * Kombinerer/akkumulerer to og to elementer fra streamen, returnerer en Stream som inneholder både siste resultat og alle delresultat
      * som blir produsert underveis.
      * <br>
-     * Scan-left-1 kan ses på som en foldLeft, med første verdi fra inputen som initiell verdi, men som returnerer
-     * mer enn bare resultatet av siste kall til <code>mapper</code>-funksjonen. Resultatet fra alle kall til <code>mapper</code>-funksjonen
-     * blir returnert.
-     * <br>
-     * ScanLeft1 støtter ikke {@link Stream#parallel() parallellitet}.
-     * <br>
-     * Eksempel 1:
-     * <br>
-     * Gitt en Stream med følgende innhold: (1, 2, 3, 4, 5)
-     * Når scanLeft1 blir brukt som collector
-     * Så skal en ny Stream med følgende innhold bli produsert: (1, 3, 6, 10, 15)
-     * <br>
-     * Eksempel 2:
-     * <br>
-     * Gitt en Stream med følgende innhold: (1)
-     * Når scanLeft1 blir brukt som collector
-     * Så skal en ny Stream med følgende innhold bli produsert: (1)
-     * <br>
-     * Eksempel 3:
-     * <br>
-     * Gitt en tom Stream
-     * Når scanLeft1 blir brukt som collector
-     * Så skal en tom Stream bli produsert
-     *
-     * @param <T>    typen av det man skal kombinere
-     * @param mapper handlingen som skal gjøres på den akumullerte tilstanden + det nye elementet
-     * @return en ny collector for scanleft1
-     * @throws UnsupportedOperationException dersom collectoren blir brukt på en parallell stream
-     * @see #foldLeft(Object, BiFunction)
-     */
-    static <T> Collector<T, ?, Stream<T>> scanLeft1(final BinaryOperator<T> mapper) {
-        return new ScanLeftCollector<>(Optional.empty(), mapper);
-    }
-
-    /**
-     * /**
-     * Kombinerer/akkumulerer to og to elementer fra streamen, returnerer en Stream som inneholder både siste resultat og alle delresultat
-     * som blir produsert underveis.
-     * <br>
-     * Scan-left er en scanLeft1, hvor vi oppgir den initielle verdien (scanLeft1 har en hardkodet initiell verdi som er Optional.empty()).
+     * Scan-left kan ses på som en fold-left, men som returnerer resultatene for alle operasjonene utført underveis.
+     * Det vil si at resultatet fra alle kall til <code>mapper</code>-funksjonen blir returnert.
      * <br>
      * ScanLeft støtter ikke {@link Stream#parallel() parallellitet}.
      * <br>
@@ -225,10 +187,47 @@ public interface Collectors {
      * @param mapper        handlingen som skal gjøres på den akumullerte tilstanden + det nye elementet
      * @return en ny collector for scanleft
      * @throws UnsupportedOperationException dersom collectoren blir brukt på en parallell stream
-     * @see #scanLeft(Optional, BinaryOperator)
+     * @see #foldLeft(Object, BiFunction)
      */
     static <T> Collector<T, ?, Stream<T>> scanLeft(final Optional<T> initiellVerdi, final BinaryOperator<T> mapper) {
         return new ScanLeftCollector<>(initiellVerdi, mapper);
+    }
+
+    /**
+     * /**
+     * Kombinerer/akkumulerer to og to elementer fra streamen, returnerer en Stream som inneholder både siste resultat og alle delresultat
+     * som blir produsert underveis.
+     * <br>
+     * Scan-left-1 er en scan-left, som har en hardkodet initiell verdi som er Optional.empty().
+     * <br>
+     * ScanLeft1 støtter ikke {@link Stream#parallel() parallellitet}.
+     * <br>
+     * Eksempel 1:
+     * <br>
+     * Gitt en Stream med følgende innhold: (1, 2, 3, 4, 5)
+     * Når scanLeft1 blir brukt som collector
+     * Så skal en ny Stream med følgende innhold bli produsert: (1, 3, 6, 10, 15)
+     * <br>
+     * Eksempel 2:
+     * <br>
+     * Gitt en Stream med følgende innhold: (1)
+     * Når scanLeft1 blir brukt som collector
+     * Så skal en ny Stream med følgende innhold bli produsert: (1)
+     * <br>
+     * Eksempel 3:
+     * <br>
+     * Gitt en tom Stream
+     * Når scanLeft1 blir brukt som collector
+     * Så skal en tom Stream bli produsert
+     *
+     * @param <T>    typen av det man skal kombinere
+     * @param mapper handlingen som skal gjøres på den akumullerte tilstanden + det nye elementet
+     * @return en ny collector for scanleft1
+     * @throws UnsupportedOperationException dersom collectoren blir brukt på en parallell stream
+     * @see #scanLeft(Optional, BinaryOperator)
+     */
+    static <T> Collector<T, ?, Stream<T>> scanLeft1(final BinaryOperator<T> mapper) {
+        return new ScanLeftCollector<>(Optional.empty(), mapper);
     }
 
     static <Key, Value> Collector<Tuple2<Key, Value>, ?, Map<Key, Value>> toMap() {
