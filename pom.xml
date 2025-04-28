@@ -11,7 +11,7 @@
 
     <groupId>no.spk.panda</groupId>
     <artifactId>panda-functional-lib</artifactId>
-    <version>1.0.6-SNAPSHOT</version>
+    <version>1.0.6</version>
 
     <scm>
         <connection>scm:git:git@github.com:statens-pensjonskasse/panda-functional-lib.git</connection>
