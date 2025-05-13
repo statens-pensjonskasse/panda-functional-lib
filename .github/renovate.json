@@ -2,5 +2,14 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "local>statens-pensjonskasse/renovate-presets-internal:weekly-automerge-non-major"
+  ],
+  "packageRules": [
+    {
+      "matchPackagePatterns": [
+        "*"
+      ],
+      "automerge": true,
+      "commitBody": "[skip ci]"
+    }
   ]
 }
