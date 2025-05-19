@@ -5,11 +5,11 @@
   ],
   "packageRules": [
     {
-      "matchPackagePatterns": [
-        "*"
-      ],
       "automerge": true,
-      "commitBody": "[skip ci]"
+      "commitBody": "[skip ci]",
+      "matchPackageNames": [
+        "*"
+      ]
     }
   ]
 }
