@@ -6,7 +6,7 @@
   "packageRules": [
     {
       "automerge": true,
-      "commitBody": "[skip ci]",
+      "commitBody": "[skip release]",
       "matchPackageNames": [
         "*"
       ]
