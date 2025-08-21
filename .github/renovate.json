@@ -1,15 +1,29 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "local>statens-pensjonskasse/renovate-presets-internal:weekly-automerge-non-major"
+    "config:recommended",
+    ":disableRateLimiting",
+    "docker:enableMajor"
   ],
+  "timezone": "UTC",
+  "rangeStrategy": "bump",
   "packageRules": [
     {
-      "automerge": true,
-      "commitBody": "[skip release]",
       "matchPackageNames": [
         "*"
-      ]
+      ],
+      "groupName": "all non-major dependencies",
+      "groupSlug": "all-non-major",
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "commitBody": "[skip release]",
+      "automerge": true,
+      "automergeType": "branch"
     }
+  ],
+  "schedule": [
+    "Before 5am on Monday"
+  ],
+  "automergeSchedule": [
+    "Before 5am on Monday"
   ]
 }
