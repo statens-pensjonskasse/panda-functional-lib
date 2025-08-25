@@ -6,7 +6,7 @@
     <parent>
         <groupId>no.spk</groupId>
         <artifactId>spk-root-pom</artifactId>
-        <version>131.1.0</version>
+        <version>132.0.0</version>
     </parent>
 
     <groupId>no.spk.panda</groupId>
