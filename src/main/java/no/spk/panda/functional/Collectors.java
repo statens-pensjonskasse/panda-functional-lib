@@ -126,6 +126,7 @@ public interface Collectors {
      * @return en stream av "vinduer".
      * @throws UnsupportedOperationException dersom streamen inneholder kun 1 element, det er ikke mulig å produsere et vindu med to element i denne
      *                                       situasjonen, eller viss collectoren blir brukt på en parallell stream
+     * @see Gatherers#slidingWindow()
      */
     static <T> Collector<T, List<Tuple2<T, Optional<T>>>, Stream<Tuple2<T, T>>> slidingWindow() {
         return new SlidingWindowCollector<>();
@@ -149,6 +150,7 @@ public interface Collectors {
      * @param <R>     den akkumulerte tilstanden
      * @return den akkumulerte tilstanden
      * @throws UnsupportedOperationException dersom collectoren blir brukt på en parallell stream
+     * @see java.util.stream.Gatherers#fold(java.util.function.Supplier, BiFunction)
      */
     static <T, R> Collector<T, ?, R> foldLeft(final R initial, final BiFunction<R, T, R> reduce) {
         return new FoldLeftCollector<>(initial, reduce);
@@ -188,6 +190,8 @@ public interface Collectors {
      * @return en ny collector for scanleft
      * @throws UnsupportedOperationException dersom collectoren blir brukt på en parallell stream
      * @see #foldLeft(Object, BiFunction)
+     * @see Gatherers#scanLeft(Optional, BinaryOperator)
+     * @see java.util.stream.Gatherers#scan(java.util.function.Supplier, BiFunction)
      */
     static <T> Collector<T, ?, Stream<T>> scanLeft(final Optional<T> initiellVerdi, final BinaryOperator<T> mapper) {
         return new ScanLeftCollector<>(initiellVerdi, mapper);
@@ -225,6 +229,7 @@ public interface Collectors {
      * @return en ny collector for scanleft1
      * @throws UnsupportedOperationException dersom collectoren blir brukt på en parallell stream
      * @see #scanLeft(Optional, BinaryOperator)
+     * @see Gatherers#scanLeft1(BinaryOperator)
      */
     static <T> Collector<T, ?, Stream<T>> scanLeft1(final BinaryOperator<T> mapper) {
         return new ScanLeftCollector<>(Optional.empty(), mapper);
