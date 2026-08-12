@@ -50,6 +50,10 @@ public interface Tuple {
         }));
     }
 
+    static <K, V> Tuple2<K, V> fraMap(final Map.Entry<K, V> entry) {
+        return tuple(entry.getKey(), entry.getValue());
+    }
+
     static <T1, T2> Tuple2<T1, T2> tuple(final T1 _1, final T2 _2) {
         return new Tuple2<>(_1, _2);
     }

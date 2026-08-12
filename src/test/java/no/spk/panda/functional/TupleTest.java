@@ -1,10 +1,12 @@
 package no.spk.panda.functional;
 
+import static no.spk.panda.functional.Collectors.toMap;
 import static no.spk.panda.functional.Tuple.asMap;
 import static no.spk.panda.functional.Tuple.tuple;
 import static no.spk.panda.functional.Tuple.tupled;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -28,6 +30,23 @@ class TupleTest {
         final Function<Tuple2<Integer, Integer>, Integer> parSum = tupled(sum);
 
         assertThat(parSum.apply(parMedTall)).isEqualTo(6);
+    }
+
+    @Test
+    void fraMap_skal_gjøre_om_en_map_entry_til_en_tuple() {
+        final List<Tuple2<String, Integer>> tupleListe = List.of(tuple("nøkkel", 1234), tuple("elefant", 42), tuple("null", 0));
+
+        assertThat(
+                tupleListe
+                        .stream()
+                        .collect(toMap())
+                        .entrySet()
+                        .stream()
+                        .map(Tuple::fraMap)
+                        .toList()
+        )
+                .as("Skal være den samme lista")
+                .containsExactlyInAnyOrderElementsOf(tupleListe);
     }
 
     @Test
