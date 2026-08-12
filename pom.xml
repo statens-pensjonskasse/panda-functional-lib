@@ -6,7 +6,7 @@
 
     <groupId>no.spk.panda</groupId>
     <artifactId>panda-functional-lib</artifactId>
-    <version>2.0.1</version>
+    <version>2.0.2-SNAPSHOT</version>
 
     <organization>
         <name>Statens pensjonskasse</name>
