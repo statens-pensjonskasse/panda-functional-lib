@@ -1,5 +1,7 @@
 package no.spk.panda.functional;
 
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.groupingBy;
 import static no.spk.panda.functional.Tuple.tuple;
 
 import java.util.ArrayList;
@@ -237,5 +239,121 @@ public interface Collectors {
 
     static <Key, Value> Collector<Tuple2<Key, Value>, ?, Map<Key, Value>> toMap() {
         return java.util.stream.Collectors.toMap(t -> t._1, t -> t._2);
+    }
+
+    /**
+     * Pakker inn en collector som produserer et {@link Map}, og gjør om resultatet til en Stream ved å kalle
+     * <code>mapper</code> på hvert (nøkkel, verdi)-par i mappet.
+     * <br>
+     * Dette lar en bruke {@link java.util.stream.Collectors#groupingBy(Function) groupingBy},
+     * {@link java.util.stream.Collectors#toMap(Function, Function) toMap},
+     * {@link java.util.stream.Collectors#partitioningBy(java.util.function.Predicate) partitioningBy} og lignende
+     * midt i en stream-pipeline uten å måtte gå veien om <code>.entrySet().stream()</code>.
+     *
+     * <pre>
+     * Eksempel:
+     * {@code Stream.of("Mandag", "Tirsdag", "Torsdag").collect(mapToStream(groupingBy(s -> s.charAt(0)), (bokstav, dager) -> bokstav + "=" + dager.size()))}
+     * gir ut samme elementer som:
+     * {@code Stream.of("M=1", "T=2")}
+     * </pre>
+     * <br>
+     * Rekkefølgen på elementene i den resulterende streamen er kun definert dersom <code>downstream</code> produserer et
+     * map med definert iterasjonsrekkefølge, for eksempel {@link java.util.TreeMap} eller {@link java.util.LinkedHashMap}.
+     *
+     * @param downstream collectoren som produserer mappet
+     * @param mapper     funksjonen som lager et element i resultat-streamen fra hvert (nøkkel, verdi)-par
+     * @param <T>        typen av elementene i streamen som blir samlet opp
+     * @param <K>        typen av nøklene i mappet
+     * @param <V>        typen av verdiene i mappet
+     * @param <R>        typen av elementene i den resulterende streamen
+     * @return en collector som gir en stream av resultatene fra <code>mapper</code>
+     * @see #mapToStream(Collector)
+     * @see java.util.stream.Collectors#collectingAndThen(Collector, Function)
+     */
+    static <T, K, V, R> Collector<T, ?, Stream<R>> mapToStream(
+            final Collector<T, ?, ? extends Map<K, V>> downstream,
+            final BiFunction<? super K, ? super V, ? extends R> mapper
+    ) {
+        return collectingAndThen(
+                downstream,
+                map -> map.entrySet().stream().map(e -> mapper.apply(e.getKey(), e.getValue()))
+        );
+    }
+
+    /**
+     * Som {@link #mapToStream(Collector, BiFunction)}, men gir hvert (nøkkel, verdi)-par ut som en {@link Tuple2}.
+     *
+     * <pre>
+     * Eksempel:
+     * {@code Stream.of("Mandag", "Tirsdag", "Torsdag").collect(mapToStream(groupingBy(s -> s.charAt(0))))}
+     * gir ut samme elementer som:
+     * {@code Stream.of(tuple('M', List.of("Mandag")), tuple('T', List.of("Tirsdag", "Torsdag")))}
+     * </pre>
+     *
+     * @param downstream collectoren som produserer mappet
+     * @param <T>        typen av elementene i streamen som blir samlet opp
+     * @param <K>        typen av nøklene i mappet
+     * @param <V>        typen av verdiene i mappet
+     * @return en collector som gir en stream av {@link Tuple2} med nøkkel som første og verdi som andre element
+     * @see #mapToStream(Collector, BiFunction)
+     */
+    static <T, K, V> Collector<T, ?, Stream<Tuple2<K, V>>> mapToStream(
+            final Collector<T, ?, ? extends Map<K, V>> downstream
+    ) {
+        return mapToStream(downstream, Tuple::tuple);
+    }
+
+    /**
+     * Grupperer elementene etter <code>classifier</code> og gir hver (nøkkel, gruppe) til <code>mapper</code>,
+     * der gruppen er en {@link List} av elementene som hører til nøkkelen.
+     * <br>
+     * Tilsvarer {@code mapToStream(groupingBy(classifier), mapper)}.
+     *
+     * <pre>
+     * Eksempel:
+     * {@code Stream.of("Mandag", "Tirsdag", "Torsdag").collect(groupingToStream(s -> s.charAt(0), (bokstav, dager) -> bokstav + "=" + dager.size()))}
+     * gir ut samme elementer som:
+     * {@code Stream.of("M=1", "T=2")}
+     * </pre>
+     * <br>
+     * Rekkefølgen på gruppene i den resulterende streamen er ikke definert.
+     *
+     * @param classifier funksjonen som bestemmer hvilken gruppe et element hører til
+     * @param mapper     funksjonen som lager et element i resultat-streamen fra hver (nøkkel, gruppe)
+     * @param <T>        typen av elementene i streamen som blir samlet opp
+     * @param <K>        typen av gruppenøklene
+     * @param <R>        typen av elementene i den resulterende streamen
+     * @return en collector som gir en stream av resultatene fra <code>mapper</code>
+     * @see #groupingToStream(Function)
+     * @see #mapToStream(Collector, BiFunction)
+     */
+    static <T, K, R> Collector<T, ?, Stream<R>> groupingToStream(
+            final Function<? super T, ? extends K> classifier,
+            final BiFunction<? super K, ? super List<T>, ? extends R> mapper
+    ) {
+        return mapToStream(groupingBy(classifier), mapper);
+    }
+
+    /**
+     * Som {@link #groupingToStream(Function, BiFunction)}, men gir hver (nøkkel, gruppe) ut som en {@link Tuple2}
+     * der andre element er gruppen som en {@link List}.
+     *
+     * <pre>
+     * Eksempel:
+     * {@code Stream.of("Mandag", "Tirsdag", "Torsdag").collect(groupingToStream(s -> s.charAt(0)))}
+     * gir ut samme elementer som:
+     * {@code Stream.of(tuple('M', List.of("Mandag")), tuple('T', List.of("Tirsdag", "Torsdag")))}
+     * </pre>
+     *
+     * @param classifier funksjonen som bestemmer hvilken gruppe et element hører til
+     * @param <T>        typen av elementene i streamen som blir samlet opp
+     * @param <K>        typen av gruppenøklene
+     * @return en collector som gir en stream av {@link Tuple2} med nøkkel som første og gruppen som andre element
+     * @see #groupingToStream(Function, BiFunction)
+     */
+    static <T, K> Collector<T, ?, Stream<Tuple2<K, List<T>>>> groupingToStream(
+            final Function<? super T, ? extends K> classifier
+    ) {
+        return groupingToStream(classifier, Tuple::tuple);
     }
 }
